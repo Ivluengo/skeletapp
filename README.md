@@ -9,6 +9,7 @@ A simple CLI tool to create a new project from a template.
    1. When you will launch the tool, you will be asked to choose a template.
 3. Inside the template folder, add your own files.
 4. If you want Skeletapp to fix your package.json file so whenever you create a new project from this template, the versions of the dependencies will be the latest ones, you need to add an asterisk (`*`) to the version of the dependencies you want to be updated.
+5. Recommended to delete the `package-lock.json` file so it won't collide with the versions Skeletapp will fix.
 
 ```json
 {
