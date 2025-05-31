@@ -1,16 +1,17 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import fixPackageJsonVersions from './fixPackageJsonVersions.js';
 import picocolors from 'picocolors';
 
-const CURR_DIR = process.cwd();
+const CURRENT_DIR = process.cwd();
 
 async function createDirectoryContents(templatePath, newProjectPath) {
   try {
     const filesToCreate = await fs.readdir(templatePath);
 
     for (const file of filesToCreate) {
-      const origFilePath = `${templatePath}/${file}`;
+      const origFilePath = path.join(templatePath, file);
 
       // get stats about the current file
       const stats = await fs.stat(origFilePath);
@@ -21,25 +22,28 @@ async function createDirectoryContents(templatePath, newProjectPath) {
         // Rename
         if (file === '.npmignore') file = '.gitignore';
 
-        const writePath =
-          newProjectPath !== '.' ? `${CURR_DIR}/${newProjectPath}/${file}` : `${CURR_DIR}/${file}`;
+        const writeDir =
+          newProjectPath === '.' ? CURRENT_DIR : path.join(CURRENT_DIR, newProjectPath);
+
+        const writePath = path.join(writeDir, file);
 
         // Fix package.json with latest versions
         file === 'package.json'
           ? await fixPackageJsonVersions(origFilePath, writePath)
           : await fs.writeFile(writePath, contents, 'utf8');
       } else if (stats.isDirectory()) {
-        if (newProjectPath !== '.') {
-          await fs.mkdir(`${CURR_DIR}/${newProjectPath}/${file}`);
-        } else {
-          await fs.mkdir(`${CURR_DIR}/${file}`);
-        }
+        const newFolderPath =
+          newProjectPath === '.' ? path.join(CURRENT_DIR) : path.join(CURRENT_DIR, newProjectPath);
+
+        const newFolderWritePath = path.join(newFolderPath, file);
+
+        await fs.mkdir(newFolderWritePath, { recursive: true });
 
         // recursive call
         if (newProjectPath !== '.') {
-          await createDirectoryContents(`${templatePath}/${file}`, `${newProjectPath}/${file}`);
+          await createDirectoryContents(origFilePath, path.join(newProjectPath, file));
         } else {
-          await createDirectoryContents(`${templatePath}/${file}`, `./${file}`);
+          await createDirectoryContents(origFilePath, file);
         }
       }
     }

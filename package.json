@@ -20,6 +20,7 @@
   "dependencies": {
     "cli-spinners": "^3.2.0",
     "commander": "^14.0.0",
+    "degit": "^2.8.4",
     "fs-extra": "^11.3.0",
     "inquirer": "9.2.15",
     "ora": "^8.2.0",
