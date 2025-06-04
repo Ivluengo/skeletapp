@@ -2,3 +2,5 @@ node_modules/
 dist
 .vscode
 templates/**
+!templates/your-templates-here
+

@@ -1,7 +1,6 @@
 import os from 'node:os';
 import fs from 'node:fs';
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 import inquirer from 'inquirer';
 import picocolors from 'picocolors';
@@ -14,21 +13,15 @@ const CURRENT_DIR = process.cwd();
 
 // Create a global and local user template directory if don't exist
 const GLOBAL_TEMPLATE_DIR = path.join(os.homedir(), '.skeletapp', 'templates');
-const TEMPLATES_DIR = path.join(CURRENT_DIR, 'templates');
 
 createDirectory(GLOBAL_TEMPLATE_DIR);
-createDirectory(TEMPLATES_DIR);
 
 // Get the list of templates
-const templateChoices = fs
-  .readdirSync(TEMPLATES_DIR)
-  .map((template) => ({ template, origin: TEMPLATES_DIR }));
-
 const globalChoices = fs
   .readdirSync(GLOBAL_TEMPLATE_DIR)
   .map((template) => ({ template, origin: GLOBAL_TEMPLATE_DIR }));
 
-const CHOICES = [...templateChoices, ...globalChoices].map((choice) => choice.template);
+const CHOICES = globalChoices.map((choice) => choice.template);
 
 const QUESTIONS = [
   {
@@ -54,9 +47,7 @@ inquirer
   .then(async (answers) => {
     const { projectChoice, projectName } = answers;
 
-    const template =
-      templateChoices.find((choice) => choice.template === projectChoice) ||
-      globalChoices.find((choice) => choice.template === projectChoice);
+    const template = globalChoices.find((choice) => choice.template === projectChoice);
 
     if (!template) {
       console.log(picocolors.red('❌ Template not found'));
