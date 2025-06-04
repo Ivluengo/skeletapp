@@ -1,6 +1,6 @@
 {
   "name": "skeletapp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Package to create a new project from a template",
   "main": "index.js",
   "type": "module",
